@@ -16,19 +16,21 @@ import org.apache.commons.io.FilenameUtils;
  * @author PP
  */
 public class Sabsalon1 {
-    static LinkedList<String> insidefile = new LinkedList<String>();
+    LinkedList<String> insidefile = new LinkedList<String>();
     
-    private static class wrongFileNameException extends Exception {
+    private class wrongFileNameException extends Exception {
 
     private wrongFileNameException(String message){
      super(message);
     }
     }
     
-    private static String readFile(String filelocation) throws wrongFileNameException, FileNotFoundException, IOException{
+    private String readFile(String filelocation) throws wrongFileNameException, FileNotFoundException, IOException{
         String ext = FilenameUtils.getExtension(filelocation);
-        System.out.println("File ext is:" +ext);
-        if("c".equals(ext) || "C".equals(ext)){
+        if(!"c".equals(ext) || !"C".equals(ext)){
+            throw new wrongFileNameException("Is not a valid file (must be a c file)");
+        }
+        else{
             BufferedReader buff = null;
 		try {
 			String sCurrentLine;
@@ -47,16 +49,13 @@ public class Sabsalon1 {
 			}
 		}
         }
-
-        else{
-            throw new wrongFileNameException("Is not a valid file (must be a c file)");
-        }
         
         return "unfinished";
     }
     
-    public static void main(String[] args) throws wrongFileNameException, IOException {
-        String haha = readFile("readthis.c");
+    public static void main(String[] args) {
+        // TODO code application logic here
     }
     
 }
+  
