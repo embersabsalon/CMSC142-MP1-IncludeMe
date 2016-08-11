@@ -28,6 +28,34 @@ public class Sabsalon1 {
     }
     }
     
+    private static String readH(String filelocation) throws wrongFileNameException, FileNotFoundException, IOException{
+        String ext = FilenameUtils.getExtension(filelocation);
+        if("h".equals(ext) || "H".equals(ext)){
+            BufferedReader buff = null;
+		try {
+			String sCurrentLine;
+			buff = new BufferedReader(new FileReader(filelocation));
+			while ((sCurrentLine = buff.readLine()) != null) {
+				System.out.println(sCurrentLine);
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if (buff != null)buff.close();
+			} catch (IOException ex) {
+				ex.printStackTrace();
+			}
+		}
+        }
+
+        else{
+            throw new wrongFileNameException("Is not a valid header (must be a .h file)");
+        }
+        
+        return "unfinished";
+    }
+    
     private static String readFile(String filelocation) throws wrongFileNameException, FileNotFoundException, IOException{
         String ext = FilenameUtils.getExtension(filelocation);
         if("c".equals(ext) || "C".equals(ext) || "cpp".equals(ext)){
@@ -57,7 +85,7 @@ public class Sabsalon1 {
         return "unfinished";
     }
     
-    private static void checkQuotations(){
+    private static void checkQuotations() throws wrongFileNameException, IOException{
         if (insidefile.isEmpty()){
             System.out.println("No contents read");
         }
@@ -67,7 +95,9 @@ public class Sabsalon1 {
                 Pattern p = Pattern.compile("\"([^\"]*)\"");
                 Matcher m = p.matcher(element);
                 while (m.find()) {
-                    System.out.println(m.group(1));
+                    //System.out.println(m.group(1));
+                    System.out.println("\nContents of "+m.group(1)+" : ");
+                    String haha = readH(m.group(1));
                 }
             }
         }
@@ -90,7 +120,6 @@ public class Sabsalon1 {
     }
     
     public static void main(String[] args) throws wrongFileNameException, IOException {
-        File readth = new File("readthis.c");
         String haha = readFile("inputFile.cpp");
         checkInclude();
         checkQuotations();
