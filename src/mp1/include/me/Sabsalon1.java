@@ -10,6 +10,8 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.LinkedList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.apache.commons.io.FilenameUtils;
 
 /**
@@ -55,9 +57,27 @@ public class Sabsalon1 {
         return "unfinished";
     }
     
+    private static void checkQuotations(){
+        if (insidefile.isEmpty()){
+            System.out.println("No contents read");
+        }
+        else{
+            System.out.println("Printing inside quotations");
+            for(String element : insidefile){
+                Pattern p = Pattern.compile("\"([^\"]*)\"");
+                Matcher m = p.matcher(element);
+                while (m.find()) {
+                    System.out.println(m.group(1));
+                }
+            }
+        }
+        //here end
+    }
+    
     public static void main(String[] args) throws wrongFileNameException, IOException {
         File readth = new File("readthis.c");
         String haha = readFile("inputFile.cpp");
+        checkQuotations();
     }
     
 }
