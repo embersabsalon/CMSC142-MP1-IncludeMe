@@ -74,9 +74,25 @@ public class Sabsalon1 {
         //here end
     }
     
+    private static void checkInclude(){
+        if (insidefile.isEmpty()){
+            System.out.println("No contents read");
+        }
+        else{
+            System.out.println("Printing lines with include call");
+            for(String element : insidefile){
+                if(element.contains("#include ")||element.contains(" #include ")){
+                    System.out.println(element);
+                }
+            }
+        }
+        //here end
+    }
+    
     public static void main(String[] args) throws wrongFileNameException, IOException {
         File readth = new File("readthis.c");
         String haha = readFile("inputFile.cpp");
+        checkInclude();
         checkQuotations();
     }
     
