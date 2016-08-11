@@ -5,6 +5,7 @@
  */
 package mp1.include.me;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -27,8 +28,7 @@ public class Sabsalon1 {
     
     private static String readFile(String filelocation) throws wrongFileNameException, FileNotFoundException, IOException{
         String ext = FilenameUtils.getExtension(filelocation);
-        System.out.println("File ext is:" +ext);
-        if("c".equals(ext) || "C".equals(ext)){
+        if("c".equals(ext) || "C".equals(ext) || "cpp".equals(ext)){
             BufferedReader buff = null;
 		try {
 			String sCurrentLine;
@@ -49,14 +49,15 @@ public class Sabsalon1 {
         }
 
         else{
-            throw new wrongFileNameException("Is not a valid file (must be a c file)");
+            throw new wrongFileNameException("Is not a valid file (must be a c/cpp file)");
         }
         
         return "unfinished";
     }
     
     public static void main(String[] args) throws wrongFileNameException, IOException {
-        String haha = readFile("readthis.c");
+        File readth = new File("readthis.c");
+        String haha = readFile("inputFile.cpp");
     }
     
 }
