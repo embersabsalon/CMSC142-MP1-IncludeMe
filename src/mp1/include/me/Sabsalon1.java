@@ -10,6 +10,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.LinkedList;
+import java.util.Stack;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.commons.io.FilenameUtils;
@@ -20,6 +21,7 @@ import org.apache.commons.io.FilenameUtils;
  */
 public class Sabsalon1 {
     static LinkedList<String> insidefile = new LinkedList<String>();
+    static LinkedList<String> finaloutput = new LinkedList<String>();
     
     private static class wrongFileNameException extends Exception {
 
@@ -31,12 +33,15 @@ public class Sabsalon1 {
     private static String readH(String filelocation) throws wrongFileNameException, FileNotFoundException, IOException{
         String ext = FilenameUtils.getExtension(filelocation);
         if("h".equals(ext) || "H".equals(ext)){
+            System.out.println("Is right header, contents of "+filelocation);
             BufferedReader buff = null;
 		try {
 			String sCurrentLine;
 			buff = new BufferedReader(new FileReader(filelocation));
 			while ((sCurrentLine = buff.readLine()) != null) {
 				System.out.println(sCurrentLine);
+                                checkValidAndInclude(sCurrentLine);
+                                finaloutput.add(sCurrentLine);
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -85,44 +90,96 @@ public class Sabsalon1 {
         return "unfinished";
     }
     
-    private static void checkQuotations() throws wrongFileNameException, IOException{
-        if (insidefile.isEmpty()){
+    
+    
+    private static boolean checkQuotations(String checkthis) throws wrongFileNameException, IOException{
+        if (checkthis.isEmpty()){
+            System.out.println("No contents read");
+            return false;
+        }
+        else{
+                Pattern p = Pattern.compile("\"([^\"]*)\"");
+                Matcher m = p.matcher(checkthis);
+                while (m.find()) {
+                    //System.out.println(m.group(1));
+                    if(m.group(1).isEmpty())
+                        return false;
+                    else{
+                    System.out.println("\nContents of "+m.group(1)+" : ");
+                        System.out.println("Has right quotations!");
+                    String haha = readH(m.group(1));
+                    }
+                }
+        }
+        return false;
+        //here end
+    }
+    
+    private static boolean checkRepeat(String checkthis){
+        if(finaloutput.contains(checkthis)){
+            return true;
+        }
+        return false;
+    }
+    
+    private static void checkValidAndInclude(String checkthis) throws wrongFileNameException, IOException{
+        if (checkthis.isEmpty()){
             System.out.println("No contents read");
         }
         else{
-            System.out.println("Printing inside quotations");
-            for(String element : insidefile){
-                Pattern p = Pattern.compile("\"([^\"]*)\"");
-                Matcher m = p.matcher(element);
-                while (m.find()) {
-                    //System.out.println(m.group(1));
-                    System.out.println("\nContents of "+m.group(1)+" : ");
-                    String haha = readH(m.group(1));
-                }
+                if(checkthis.contains("#include ")||checkthis.contains(" #include ")){
+                    System.out.println("has include!");
+                    if(checkRepeat(checkthis))
+                        System.out.println("Repeated include call");
+                    else
+                    checkQuotations(checkthis);
             }
+                else{
+                    System.out.println("Is not an include call!");
+                    if(checkRepeat(checkthis))
+                        System.out.println("Repeated line detected");
+                    //else
+                        //finaloutput.add(checkthis);
+                }
         }
         //here end
     }
     
-    private static void checkInclude(){
-        if (insidefile.isEmpty()){
-            System.out.println("No contents read");
-        }
-        else{
-            System.out.println("Printing lines with include call");
-            for(String element : insidefile){
-                if(element.contains("#include ")||element.contains(" #include ")){
-                    System.out.println(element);
+    private static void clean(){
+        for(int i=0;i<finaloutput.size();i++){
+            if(finaloutput.get(i).contains("#include ")||finaloutput.get(i).contains(" #include ")){
+                Pattern p = Pattern.compile("\"([^\"]*)\"");
+                Matcher m = p.matcher(finaloutput.get(i));
+                while (m.find()) {
+                    //System.out.println(m.group(1));
+                    if(!m.group(1).isEmpty()){
+                        finaloutput.remove(i);
+                        i--;
+                    }
                 }
             }
         }
-        //here end
+    }
+    
+    private static void parse() throws wrongFileNameException, IOException{
+        for(String element : insidefile){
+            checkValidAndInclude(element);
+        }
+        clean();
+    }
+    
+    private static void printOutput(){
+        System.out.println("Final File: ");
+        finaloutput.stream().forEach((element) -> {
+            System.out.println(element);
+        });
     }
     
     public static void main(String[] args) throws wrongFileNameException, IOException {
         String haha = readFile("inputFile.cpp");
-        checkInclude();
-        checkQuotations();
+        System.out.println("checking...");
+        parse();
+        printOutput();
     }
     
 }
