@@ -158,18 +158,39 @@ public class Sabsalon1 {
                     }
                 }
             }
+            if("".equals(finaloutput.get(i)) && "".equals(finaloutput.get(i+1))){
+                finaloutput.remove(i);
+                i--;
+            }
         }
     }
     
     private static void parse() throws wrongFileNameException, IOException{
         for(String element : insidefile){
-            checkValidAndInclude(element);
+            if(element.contains("#include ")||element.contains(" #include ")){
+                Pattern p = Pattern.compile("\"([^\"]*)\"");
+                Matcher m = p.matcher(element);
+                while (m.find()) {
+                    //System.out.println(m.group(1));
+                    if(!m.group(1).isEmpty()){
+                        checkValidAndInclude(element);
+                        finaloutput.add("");
+                    }
+                    else{
+                        finaloutput.add(element);
+                    }
+                }
+            }
+            
+            else{
+             finaloutput.add(element);
+            }
         }
         clean();
     }
     
     private static void printOutput(){
-        System.out.println("Final File: ");
+        System.out.println("\nFinal File:");
         finaloutput.stream().forEach((element) -> {
             System.out.println(element);
         });
