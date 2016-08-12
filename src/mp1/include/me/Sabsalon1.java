@@ -9,6 +9,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.util.LinkedList;
 import java.util.Stack;
 import java.util.regex.Matcher;
@@ -122,6 +124,16 @@ public class Sabsalon1 {
         return false;
     }
     
+    private static void writeOutput() throws FileNotFoundException, UnsupportedEncodingException{
+        System.out.println("\nWriting to file...(outputFile.out)");
+        PrintWriter writer = new PrintWriter("outputFile.out", "UTF-8");
+        finaloutput.stream().forEach((element) -> {
+            writer.println(element);
+        });
+        writer.close();
+        System.out.println("File write success!");
+    }
+    
     private static void checkValidAndInclude(String checkthis) throws wrongFileNameException, IOException{
         if (checkthis.isEmpty()){
             System.out.println("No contents read");
@@ -201,6 +213,7 @@ public class Sabsalon1 {
         System.out.println("checking...");
         parse();
         printOutput();
+        writeOutput();
     }
     
 }
